@@ -14,7 +14,7 @@ export class FmFrontend extends ComponentResource {
         super("pkg:index:FmFrontend", resourceName, {}, opts);
 
         const source = new FMBucket({
-            Name: `linna-${args.Name}`,
+            Name: `${args.Name}`,
             Product: args.Product,
             Public: true,
         }, 
@@ -24,7 +24,7 @@ export class FmFrontend extends ComponentResource {
         );
 
         const replica = new FMBucket({
-            Name: `linna-${args.Name}-replica`,
+            Name: `${args.Name}-replica`,
             Product: args.Product,
             Public: false,
         }, 
