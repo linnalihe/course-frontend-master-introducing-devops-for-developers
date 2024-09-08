@@ -14,6 +14,7 @@ import { s3 } from "@pulumi/aws";
 type FMBucketArgs = {
     Name: string;
     Product: string;
+    Public?: boolean; // this will allow devs to set the bucket to public
 };
 
 // opinionated component for creating the resources
@@ -29,21 +30,42 @@ export class FMBucket extends ComponentResource {
         const bucketName = `${resourceName}-${stack}`;
 
 
-        const bucket = new s3.Bucket(args.Name, {
+        let bucketArgs: s3.BucketArgs = {
             acl: "private",
             bucket: bucketName,
             tags: {
                 Environment: stack,
             },
-        
-        }, {parent: this});
 
-        new s3.BucketPublicAccessBlock(args.Name, {
-            bucket: bucket.id,
-            blockPublicAcls: true,
-            blockPublicPolicy: true,
-            ignorePublicAcls: true,
-            restrictPublicBuckets: true,
-        }, {parent: this});
+        }
+
+        if (args.Public) {
+            bucketArgs.acl = "public-read";
+            bucketArgs.website = {
+                indexDocument: "index.html",
+                errorDocument: "error.html",
+                routingRules: [{
+                    "Condition": {
+                        "KeyPrefixEquals": "docs/"
+                    },
+                    "Redirect": {
+                        "ReplaceKeyWith": "documents/"
+                    }
+                }]
+            }
+        }
+
+        const bucket = new s3.Bucket(args.Name, bucketArgs, {parent: this});
+
+        if (!args.Public) {
+            new s3.BucketPublicAccessBlock(args.Name, {
+                bucket: bucket.id,
+                blockPublicAcls: true,
+                blockPublicPolicy: true,
+                ignorePublicAcls: true,
+                restrictPublicBuckets: true,
+            }, {parent: this});
+        }
+
     }
 }
