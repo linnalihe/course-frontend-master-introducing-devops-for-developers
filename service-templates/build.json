@@ -1,4 +1,14 @@
 {
     "ServiceName": "linna-devops-course",
-    "ServiceType": "frontend"
+    "ServiceType": "frontend",
+
+    "Dockerfile": {
+        "InstallCommand": "yarn install",
+        "PreInstallCommands":[
+            "COPY myfile myfile"
+        ],
+        "PostInstallCommands":[
+            "COPY something something"
+        ]
+    }
 }

@@ -24,10 +24,7 @@ function main() {
 
     configure("templates", { autoescape: true });
 
-    const dockerfileTemplate = render("Dockerfile", {
-        ServiceName: configContent.ServiceName,
-        ServiceType: configContent.ServiceType,
-    })
+    const dockerfileTemplate = render("Dockerfile", configContent)
 
     writeFileSync("Dockerfile", dockerfileTemplate);
 
